@@ -1,11 +1,12 @@
 package com.sugandh.grpcjava.grpc.calculator.client;
 
-import com.proto.calculator.CalculatorServiceGrpc;
-import com.proto.calculator.PrimeRequest;
-import com.proto.calculator.SumRequest;
-import com.proto.calculator.SumResponse;
+import com.proto.calculator.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.stub.StreamObserver;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class CalculatorClient {
 
@@ -23,6 +24,7 @@ public class CalculatorClient {
 
         doUnaryCall(channel);
         doServerStreamingCall(channel);
+        doClientStreamingCall(channel);
     }
 
     private void doUnaryCall(ManagedChannel channel) {
@@ -50,6 +52,45 @@ public class CalculatorClient {
                     System.out.println(primeResponse.getPrimeResult());
                 }
         );
+    }
+
+    private void doClientStreamingCall(ManagedChannel channel) {
+        CalculatorServiceGrpc.CalculatorServiceStub asyncClient = CalculatorServiceGrpc.newStub(channel);
+        CountDownLatch latch = new CountDownLatch(1);
+
+        StreamObserver<ComputeAverageRequest> computeAverageRequestStreamObserver =
+                asyncClient.computeAverage(new StreamObserver<ComputeAverageResponse>() {
+                    @Override
+                    public void onNext(ComputeAverageResponse value) {
+                        System.out.println("Response received from the server");
+                        System.out.println(value.getAverage());
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        //Server is done, sending us data
+                        System.out.println("Server has completed, sending us something");
+                        latch.countDown();
+                    }
+                });
+
+        System.out.println(" Sending Message 1");
+        computeAverageRequestStreamObserver.onNext(ComputeAverageRequest
+                .newBuilder().setInputNumber(5).build());
+
+        System.out.println(" Sending Message 2");
+        computeAverageRequestStreamObserver.onNext(ComputeAverageRequest
+                .newBuilder().setInputNumber(16).build());
+        try {
+            latch.await(30, TimeUnit.SECONDS);
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
     }
 
 }
