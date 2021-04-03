@@ -16,6 +16,7 @@ public class BlogServiceImpl extends BlogServiceGrpc.BlogServiceImplBase {
     private MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017");
     private MongoDatabase database = mongoClient.getDatabase("database");
     private MongoCollection<Document> collection = database.getCollection("blog");
+
     @Override
     public void createBlog(CreateBlogRequest request, StreamObserver<CreateBlogResponse> responseObserver) {
 //        super.createBlog(request, responseObserver);
@@ -43,4 +44,6 @@ public class BlogServiceImpl extends BlogServiceGrpc.BlogServiceImplBase {
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
+
+
 }
