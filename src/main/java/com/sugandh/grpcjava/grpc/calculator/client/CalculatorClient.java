@@ -28,6 +28,7 @@ public class CalculatorClient {
         doServerStreamingCall(channel);
         doClientStreamingCall(channel);
         doBiDiStreamingCall(channel);
+        doFindNthSumCall(channel);
     }
 
     private void doUnaryCall(ManagedChannel channel) {
@@ -148,6 +149,16 @@ public class CalculatorClient {
         }catch (StatusRuntimeException e) {
             e.printStackTrace();
         }
+    }
+
+    private void doFindNthSumCall(ManagedChannel channel) {
+        CalculatorServiceGrpc.CalculatorServiceBlockingStub calculatorClient =
+                CalculatorServiceGrpc.newBlockingStub(channel);
+
+        FindNthSumRequest findNthSumRequest = FindNthSumRequest.newBuilder()
+                .setInputNumber(10).build();
+        FindNthSumResponse response = calculatorClient.findNthSum(findNthSumRequest);
+        System.out.println(findNthSumRequest.getInputNumber()+" "+ response.getNthSUM());
     }
 
 }

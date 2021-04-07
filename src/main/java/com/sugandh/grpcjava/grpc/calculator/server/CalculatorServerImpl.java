@@ -115,4 +115,22 @@ public class CalculatorServerImpl extends CalculatorServiceGrpc.CalculatorServic
         }
         responseObserver.onCompleted();
     }
+
+    @Override
+    public void findNthSum(FindNthSumRequest request, StreamObserver<FindNthSumResponse> responseObserver) {
+        Integer number = request.getInputNumber();
+        if(number > 0){
+            long nthSum = (number * (number+1)/2);
+            responseObserver.onNext(
+                    FindNthSumResponse.newBuilder().setNthSUM(nthSum).build()
+            );
+            System.out.println(nthSum);
+        }else {
+            responseObserver.onError(Status.INVALID_ARGUMENT
+                    .withDescription("Given input is not a positive number")
+                    .augmentDescription("Number sent : "+number).asRuntimeException()
+            );
+            responseObserver.onCompleted();
+        }
+    }
 }
