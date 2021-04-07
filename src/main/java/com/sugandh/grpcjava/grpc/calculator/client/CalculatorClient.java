@@ -3,6 +3,7 @@ package com.sugandh.grpcjava.grpc.calculator.client;
 import com.proto.calculator.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 
 import java.util.Arrays;
@@ -133,6 +134,19 @@ public class CalculatorClient {
             latch.await();
         }catch (InterruptedException e){
           e.printStackTrace();
+        }
+    }
+
+    private void doErrorCall(ManagedChannel channel){
+        CalculatorServiceGrpc.CalculatorServiceBlockingStub rootClient =
+                CalculatorServiceGrpc.newBlockingStub(channel);
+
+        int number = 4;
+        try{
+            rootClient.squareRoot(SquareRootRequest.newBuilder()
+                    .setInputNumber(number).build());
+        }catch (StatusRuntimeException e) {
+            e.printStackTrace();
         }
     }
 
