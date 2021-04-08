@@ -133,4 +133,25 @@ public class CalculatorServerImpl extends CalculatorServiceGrpc.CalculatorServic
             responseObserver.onCompleted();
         }
     }
+
+    @Override
+    public void findFibonacciNumber(FindFibonacciRequest request, StreamObserver<FindFibonacciResponse> responseObserver) {
+        Integer number = request.getInputNumber();
+
+        int a=0, b=1;
+        System.out.print(a+" ");
+        System.out.print(b+" ");
+
+        for(int i=2; i<number; i++){
+            int c = a+ b;
+            a = b;
+            b = c;
+            System.out.print(b+" ");
+
+            FindFibonacciResponse fibonacciResponse = FindFibonacciResponse.newBuilder()
+                    .setFibonacciNumber(b).build();
+            responseObserver.onNext(fibonacciResponse);
+        }
+        responseObserver.onCompleted();
+    }
 }

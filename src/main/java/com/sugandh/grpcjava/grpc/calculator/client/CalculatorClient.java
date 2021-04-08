@@ -29,6 +29,7 @@ public class CalculatorClient {
         doClientStreamingCall(channel);
         doBiDiStreamingCall(channel);
         doFindNthSumCall(channel);
+        doFindFibonacciCall(channel);
     }
 
     private void doUnaryCall(ManagedChannel channel) {
@@ -161,4 +162,15 @@ public class CalculatorClient {
         System.out.println(findNthSumRequest.getInputNumber()+" "+ response.getNthSUM());
     }
 
+    private void doFindFibonacciCall(ManagedChannel channel){
+        CalculatorServiceGrpc.CalculatorServiceBlockingStub calculatorClient =
+                CalculatorServiceGrpc.newBlockingStub(channel);
+
+        FindFibonacciRequest findFibonacciRequest = FindFibonacciRequest.newBuilder()
+                .setInputNumber(10).build();
+        calculatorClient.findFibonacciNumber(findFibonacciRequest)
+                .forEachRemaining(findFibonacciResponse -> {
+                    System.out.println(findFibonacciResponse.getFibonacciNumber());
+                });
+    }
 }

@@ -52,6 +52,13 @@ message FindNthSumResponse {
   int64 nth_SUM = 1;
 }
 
+message FindFibonacciRequest {
+  int32 input_number = 1;
+}
+
+message FindFibonacciResponse {
+  int64 fibonacci_number = 1;
+}
 service CalculatorService {
 
   rpc Sum(SumRequest) returns (SumResponse) {};
@@ -65,5 +72,7 @@ service CalculatorService {
   rpc SquareRoot(SquareRootRequest) returns (SquareRootResponse) {};
 
   rpc FindNthSum(FindNthSumRequest) returns (FindNthSumResponse) {};
+
+  rpc FindFibonacciNumber(FindFibonacciRequest) returns (stream FindFibonacciResponse) {};
 
 }
