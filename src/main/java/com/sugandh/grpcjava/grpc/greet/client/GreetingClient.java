@@ -1,9 +1,6 @@
 package com.sugandh.grpcjava.grpc.greet.client;
 
-import com.proto.greet.GreetRequest;
-import com.proto.greet.GreetResponse;
-import com.proto.greet.GreetServiceGrpc;
-import com.proto.greet.Greeting;
+import com.proto.greet.*;
 import io.grpc.ManagedChannel;
 import io.grpc.netty.shaded.io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
@@ -27,6 +24,7 @@ public class GreetingClient {
         System.out.println("Creating Stub");
 
         doUnaryCall(managedChannel);
+        doServerStreamingCall(managedChannel);
     }
 
     private void doUnaryCall(ManagedChannel managedChannel) {
@@ -43,5 +41,15 @@ public class GreetingClient {
         GreetResponse greetResponse = greetClient.greet(greetRequest);
         System.out.println(greetResponse.getResult());
 
+    }
+
+    private void doServerStreamingCall(ManagedChannel channel){
+        GreetServiceGrpc.GreetServiceBlockingStub greetClient = GreetServiceGrpc.newBlockingStub(channel);
+
+        GreetManyTimesRequest manyTimesRequest = GreetManyTimesRequest.newBuilder()
+                .setGreeting(Greeting.newBuilder().setFirstName("Sugandh")).build();
+        greetClient.greetManyTimes(manyTimesRequest).forEachRemaining(greetManyTimesResponse -> {
+            System.out.println(greetManyTimesResponse.getResult());
+        });
     }
 }
